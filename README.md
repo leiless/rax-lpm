@@ -30,10 +30,10 @@ There're two APIs used for radix tree longest prefix match:
  * see: rax/rax.c#raxFind
  */
 void *raxLongestPrefixMatch(
-    rax *tree,
-    unsigned char *key,
-    size_t len,
-    ssize_t *pos);
+        rax *tree,
+        unsigned char *key,
+        size_t len,
+        ssize_t * __nullable pos);
 
 /**
  * Find longest prefix match in a radix tree
@@ -55,8 +55,8 @@ int raxLongestPrefixMatch2(
         rax *tree,
         unsigned char *key,
         size_t len,
-        ssize_t *pos,
-        void **data);
+        ssize_t * __nullable pos,
+        void * __nullable * __nullable data);
 ```
 
 The `__nullable` keyword annotates that left hand side type can be `NULL`, i.e. it's optional. by default, pointer type shouldn't be `NULL`.
