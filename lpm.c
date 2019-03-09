@@ -103,7 +103,7 @@ static inline size_t raxLowWalk2(
  * @len         length of the key
  * @pos         [OUT] position(index) in the key
  *              ranged [-1, len]
- *              -1          indicate mismatch(will return raxNotFound)
+ *              -1          indicate mismatch(will return 0)
  *              (0, len)    indicate a submatch
  *              len         indicate a full match
  * @data        [OUT] value associated to the longest prefix match node if found
