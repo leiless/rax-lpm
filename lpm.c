@@ -157,20 +157,10 @@ void *raxLongestPrefixMatch(
         size_t len,
         size_t * __nullable pos)
 {
-    raxNode *p = NULL;
-    debugf("### Longest prefix match: %.*s len: %zu\n", (int) len, key, len);
-
-    if (pos != NULL) *pos = 0;
-
-    (void) raxLowWalk2(tree, key, len, &p, pos, NULL, NULL, NULL, NULL);
-
-    if (p == NULL) {
-        if (pos != NULL) ASSERT(*pos == 0);
-        return raxNotFound;
-    }
-
-    if (pos != NULL) ASSERT(*pos != 0);
-    return raxGetData(p);
+    void *data = raxNotFound;
+    int found = raxLongestPrefixMatch2(tree, key, len, pos, &data);
+    if (found) ASSERT(data != raxNotFound);
+    return data;
 }
 
 int main(void)
