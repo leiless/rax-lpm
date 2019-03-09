@@ -2,7 +2,6 @@
  * Created 190307+0800 lynnl
  */
 
-#include <stdio.h>
 #include <stddef.h>
 #include <string.h>
 
@@ -161,11 +160,5 @@ void *raxLongestPrefixMatch(
     int found = raxLongestPrefixMatch2(tree, key, len, pos, &data);
     if (found) ASSERT(data != raxNotFound);
     return data;
-}
-
-int main(void)
-{
-    /* TODO: add test code */
-    return 0;
 }
 

@@ -50,8 +50,8 @@ int raxLongestPrefixMatch2(
         rax *tree,
         unsigned char *key,
         size_t len,
-        size_t * __nullable pos,
-        void * __nullable * __nullable data);
+        size_t *pos,
+        void **data);
 
 #endif
 
