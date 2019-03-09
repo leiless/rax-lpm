@@ -8,6 +8,6 @@
 
 int main(void)
 {
-    /* TODO: add test code */
+    puts("TODO: add test code");
     return 0;
 }
