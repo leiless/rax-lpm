@@ -74,6 +74,7 @@ To patch [rax/rax.c](https://github.com/antirez/rax/blob/master/rax.c)(only once
 And then run the tests:
 
 ```
+# `release' target for release build
 make
 ./test_lpm
 ```

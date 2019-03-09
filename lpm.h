@@ -14,10 +14,10 @@
  * @tree        the tree
  * @key         key to match
  * @len         length of the key
- * @pos         [OUT] how many bytes processed(nullable)
- *              ranged [0, len]
- *              0           indicate mismatch(will return raxNotFound)
- *              (0, len)    indicate a submatch
+ * @pos         [OUT] position(index) in the key
+ *              ranged [-1, len]
+ *              -1          indicate mismatch(will return raxNotFound)
+ *              [0, len)    indicate a submatch
  *              len         indicate a full match
  * @return      value associated to the longest prefix match node
  *              raxNotFound if not match
@@ -28,7 +28,7 @@ void *raxLongestPrefixMatch(
     rax *tree,
     unsigned char *key,
     size_t len,
-    size_t *pos);
+    ssize_t *pos);
 
 /**
  * Find longest prefix match in a radix tree
@@ -36,9 +36,9 @@ void *raxLongestPrefixMatch(
  * @tree        the tree
  * @key         key to match
  * @len         length of the key
- * @pos         [OUT] how many bytes processed
- *              ranged [0, len]
- *              0           indicate mismatch(will return raxNotFound)
+ * @pos         [OUT] position(index) in the key
+ *              ranged [-1, len]
+ *              -1          indicate mismatch(will return raxNotFound)
  *              (0, len)    indicate a submatch
  *              len         indicate a full match
  * @data        [OUT] value associated to the longest prefix match node if found
@@ -50,7 +50,7 @@ int raxLongestPrefixMatch2(
         rax *tree,
         unsigned char *key,
         size_t len,
-        size_t *pos,
+        ssize_t *pos,
         void **data);
 
 #endif

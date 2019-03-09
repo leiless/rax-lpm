@@ -21,7 +21,7 @@ static inline size_t raxLowWalk2(
         register unsigned char *s,
         size_t len,
         raxNode * __nullable * __nullable lpmnode,
-        size_t * __nullable lpmlen,
+        ssize_t * __nullable lpmlen,
         raxNode * __nullable * __nullable stopnode,
         raxNode * __nullable * __nullable * plink,
         int * __nullable splitpos,
@@ -40,6 +40,11 @@ static inline size_t raxLowWalk2(
 
     parentlink = &rax->head;
     h = *parentlink;
+
+    if (h->iskey) {
+        if (lpmnode) *lpmnode = h;
+        if (lpmlen)  *lpmlen = i;
+    }
 
     while(h->size && i < len) {
         debugnode("Lookup current node", h);
@@ -75,10 +80,6 @@ static inline size_t raxLowWalk2(
          */
         j = 0;
 
-        /*
-         * rax->head->iskey must be zero  see: raxNew()
-         * .: we can safely check after h updated
-         */
         if (h->iskey) {
             if (lpmnode) *lpmnode = h;
             if (lpmlen)  *lpmlen = i;
@@ -100,9 +101,9 @@ static inline size_t raxLowWalk2(
  * @tree        the tree
  * @key         key to match
  * @len         length of the key
- * @pos         [OUT] how many bytes processed
- *              ranged [0, len]
- *              0           indicate mismatch(will return raxNotFound)
+ * @pos         [OUT] position(index) in the key
+ *              ranged [-1, len]
+ *              -1          indicate mismatch(will return raxNotFound)
  *              (0, len)    indicate a submatch
  *              len         indicate a full match
  * @data        [OUT] value associated to the longest prefix match node if found
@@ -114,22 +115,22 @@ int raxLongestPrefixMatch2(
         rax *tree,
         unsigned char *key,
         size_t len,
-        size_t * __nullable pos,
+        ssize_t * __nullable pos,
         void * __nullable * __nullable data)
 {
     raxNode *p = NULL;
     debugf("### Longest prefix match: %.*s len: %zu\n", (int) len, key, len);
 
-    if (pos != NULL) *pos = 0;
+    if (pos != NULL) *pos = -1;
 
     (void) raxLowWalk2(tree, key, len, &p, pos, NULL, NULL, NULL, NULL);
 
     if (p == NULL) {
-        if (pos != NULL) ASSERT(*pos == 0);
+        if (pos != NULL) ASSERT(*pos == -1);
         return 0;
     }
 
-    if (pos != NULL) ASSERT(*pos != 0);
+    if (pos != NULL) ASSERT(*pos != -1);
     if (data != NULL) *data = raxGetData(p);
     return 1;
 }
@@ -140,10 +141,10 @@ int raxLongestPrefixMatch2(
  * @tree        the tree
  * @key         key to match
  * @len         length of the key
- * @pos         [OUT] how many bytes processed(nullable)
- *              ranged [0, len]
- *              0           indicate mismatch(will return raxNotFound)
- *              (0, len)    indicate a submatch
+ * @pos         [OUT] position(index) in the key
+ *              ranged [-1, len]
+ *              -1          indicate mismatch(will return raxNotFound)
+ *              [0, len)    indicate a submatch
  *              len         indicate a full match
  * @return      value associated to the longest prefix match node
  *              raxNotFound if not match
@@ -154,7 +155,7 @@ void *raxLongestPrefixMatch(
         rax *tree,
         unsigned char *key,
         size_t len,
-        size_t * __nullable pos)
+        ssize_t * __nullable pos)
 {
     void *data = raxNotFound;
     int found = raxLongestPrefixMatch2(tree, key, len, pos, &data);
