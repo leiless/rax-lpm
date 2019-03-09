@@ -1,0 +1,13 @@
+diff --git a/rax.c b/rax.c
+index b3c263d..62bbb52 100644
+--- a/rax.c
++++ b/rax.c
+@@ -97,7 +97,7 @@ static inline void raxStackInit(raxStack *ts) {
+ }
+ 
+ /* Push an item into the stack, returns 1 on success, 0 on out of memory. */
+-static inline int raxStackPush(raxStack *ts, void *ptr) {
++int raxStackPush(raxStack *ts, void *ptr) {
+     if (ts->items == ts->maxitems) {
+         if (ts->stack == ts->static_items) {
+             ts->stack = rax_malloc(sizeof(void*)*ts->maxitems*2);
