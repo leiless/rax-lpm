@@ -41,6 +41,9 @@ extern void raxDebugShowNode(const char *, raxNode *);
 #define raxNodeFirstChildPtr(n) \
     ((raxNode **) ((n)->data + (n)->size + raxPadding((n)->size)))
 
+/* Get the node auxiliary data */
+void *raxGetData(raxNode *);
+
 /**
  * Push an item into the rax stack
  * @returns     1 on success  0 on out of memory

@@ -95,9 +95,87 @@ static inline size_t raxLowWalk2(
     return i;
 }
 
+/**
+ * Find longest prefix match in a radix tree
+ *
+ * @tree        the tree
+ * @key         key to match
+ * @len         length of the key
+ * @pos         [OUT] how many bytes processed
+ *              ranged [0, len]
+ *              0           indicate mismatch(will return raxNotFound)
+ *              (0, len)    indicate a submatch
+ *              len         indicate a full match
+ * @data        [OUT] value associated to the longest prefix match node if found
+ * @return      1 if found any match  0 o.w.
+ *
+ * see: rax/rax.c#raxFind
+ */
+int raxLongestPrefixMatch2(
+        rax *tree,
+        unsigned char *key,
+        size_t len,
+        size_t * __nullable pos,
+        void * __nullable * __nullable data)
+{
+    raxNode *p = NULL;
+    debugf("### Longest prefix match: %.*s len: %zu\n", (int) len, key, len);
+
+    if (pos != NULL) *pos = 0;
+
+    (void) raxLowWalk2(tree, key, len, &p, pos, NULL, NULL, NULL, NULL);
+
+    if (p == NULL) {
+        if (pos != NULL) ASSERT(*pos == 0);
+        return 0;
+    }
+
+    if (pos != NULL) ASSERT(*pos != 0);
+    if (data != NULL) *data = raxGetData(p);
+    return 1;
+}
+
+/**
+ * Find longest prefix match in a radix tree
+ *
+ * @tree        the tree
+ * @key         key to match
+ * @len         length of the key
+ * @pos         [OUT] how many bytes processed(nullable)
+ *              ranged [0, len]
+ *              0           indicate mismatch(will return raxNotFound)
+ *              (0, len)    indicate a submatch
+ *              len         indicate a full match
+ * @return      value associated to the longest prefix match node
+ *              raxNotFound if not match
+ *
+ * see: rax/rax.c#raxFind
+ */
+void *raxLongestPrefixMatch(
+        rax *tree,
+        unsigned char *key,
+        size_t len,
+        size_t * __nullable pos)
+{
+    raxNode *p = NULL;
+    debugf("### Longest prefix match: %.*s len: %zu\n", (int) len, key, len);
+
+    if (pos != NULL) *pos = 0;
+
+    (void) raxLowWalk2(tree, key, len, &p, pos, NULL, NULL, NULL, NULL);
+
+    if (p == NULL) {
+        if (pos != NULL) ASSERT(*pos == 0);
+        return raxNotFound;
+    }
+
+    if (pos != NULL) ASSERT(*pos != 0);
+    return raxGetData(p);
+}
+
 int main(void)
 {
-
+    /* TODO: add test code */
     return 0;
 }
 
