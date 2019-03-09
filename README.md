@@ -44,7 +44,7 @@ void *raxLongestPrefixMatch(
  * @pos         [OUT] position(index) in the key
  *              ranged [-1, len]
  *              -1          indicate mismatch(will return 0)
- *              (0, len)    indicate a submatch
+ *              [0, len)    indicate a submatch
  *              len         indicate a full match
  * @data        [OUT] value associated to the longest prefix match node if found
  * @return      1 if found any match  0 o.w.
