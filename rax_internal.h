@@ -42,7 +42,7 @@ extern void raxDebugShowNode(const char *, raxNode *);
     ((raxNode **) ((n)->data + (n)->size + raxPadding((n)->size)))
 
 /* Get the node auxiliary data */
-void *raxGetData(raxNode *);
+extern void *raxGetData(raxNode *);
 
 /**
  * Push an item into the rax stack
