@@ -1,8 +1,8 @@
-# rax-lpm, A radix tree with longest prefix match extension
+# rax-lpm, A radix tree with longest prefix match API
 
-rax-lpm derived from [rax](https://github.com/antirez/rax), it implemented a widely used [longest prefix match algorithm](https://en.wikipedia.org/wiki/Longest_prefix_match) inside the radix tree.
+rax-lpm derived from [rax](https://github.com/antirez/rax), it implemented a widely used [longest prefix match algorithm](https://en.wikipedia.org/wiki/Longest_prefix_match) in radix tree.
 
-The primary goal of this extension is to implement the longest prefix match algorithm by providing [raxFind](https://github.com/antirez/rax#key-lookup)-like functionality without intervention of [rax iterators](https://github.com/antirez/rax#iterators). It's extremely useful when you do a path prefix match, or embed the [rax](https://github.com/antirez/rax) into embedded device by removing [rax iterators](https://github.com/antirez/rax#iterators).
+The primary goal of this project is to implement the longest prefix match algorithm by providing [`raxFind`](https://github.com/antirez/rax#key-lookup)-like functionality without intervention of [rax iterators](https://github.com/antirez/rax#iterators). It's extremely useful when you do a path prefix match, or embed the [rax](https://github.com/antirez/rax) into embedded device by removing [rax iterators](https://github.com/antirez/rax#iterators).
 
 For more information, please refers to [rax](https://github.com/antirez/rax) project.
 
