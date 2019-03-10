@@ -4,7 +4,7 @@
 
 CC?=gcc
 CFLAGS+=-std=c99 -Wall -Wextra -Werror
-SOURCES=$(wildcard *.c)
+SOURCES=$(wildcard src/*.c)
 SOURCES+=rax/rax.c
 EXECUTABLE=test_lpm
 RM=rm
