@@ -10,6 +10,8 @@
 #define ASSERT              assert
 #define ASSERT_NONNULL(p)   ASSERT(p != NULL)
 
+#define ARRAY_SIZE(a)       (sizeof(a) / sizeof(*a))
+
 #ifdef __clang__
 #define __nonnull       _Nonnull
 #define __nullable      _Nullable
