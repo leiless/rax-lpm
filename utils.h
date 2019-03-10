@@ -14,9 +14,13 @@
 #define __nonnull       _Nonnull
 #define __nullable      _Nullable
 #else
+#ifdef __GNUC__
 #define __nonnull       __attribute__ ((nonnull))
+#else
+#define __nonnull       /* Unavailable */
+#endif  /* __GNUC__ */
 #define __nullable      /* Unavailable */
-#endif
+#endif  /* __clang__ */
 
 #endif
 

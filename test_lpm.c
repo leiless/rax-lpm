@@ -295,6 +295,118 @@ static void test4(void)
     raxFree(rax);
 }
 
+static void test5(void)
+{
+    rax *rax = raxNew();
+    ASSERT_NONNULL(rax);
+    static char *uuid = "44eadd55-d769-4a3e-b7fe-f3fc58c72f31";
+    ssize_t sz;
+    void *data;
+    int ok;
+
+    ok = raxInsert(rax, (u8 *) "A", 1, (void *) uuid, NULL);
+    ASSERT(ok == 1);
+
+    ok = raxInsert(rax, (u8 *) "ABC", 3, (void *) uuid, NULL);
+    ASSERT(ok == 1);
+
+    ok = raxInsert(rax, (u8 *) "ABCDEF", 6, (void *) uuid, NULL);
+    ASSERT(ok == 1);
+
+    ok = raxInsert(rax, (u8 *) "ABCDEFG", 7, (void *) uuid, NULL);
+    ASSERT(ok == 1);
+
+    ok = raxInsert(rax, (u8 *) "ABCDEFGHIJ", 10, (void *) uuid, NULL);
+    ASSERT(ok == 1);
+
+    sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) "", 0, &sz);
+    ASSERT(data == raxNotFound);
+    ASSERT(sz == -1);
+
+    sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) "a", 1, &sz);
+    ASSERT(data == raxNotFound);
+    ASSERT(sz == -1);
+
+    sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) "A", 1, &sz);
+    ASSERT(data == uuid);
+    ASSERT(sz == 1);
+
+    sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) "AB", 2, &sz);
+    ASSERT(data == uuid);
+    ASSERT(sz == 1);
+
+    sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) "ABC", 3, &sz);
+    ASSERT(data == uuid);
+    ASSERT(sz == 3);
+
+    sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) "ABD", 3, &sz);
+    ASSERT(data == uuid);
+    ASSERT(sz == 1);
+
+    sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) "ABCABC", 6, &sz);
+    ASSERT(data == uuid);
+    ASSERT(sz == 3);
+
+    sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) "ABCD", 4, &sz);
+    ASSERT(data == uuid);
+    ASSERT(sz == 3);
+
+    sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) "ABCDE", 5, &sz);
+    ASSERT(data == uuid);
+    ASSERT(sz == 3);
+
+    sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) "ABCDEF", 6, &sz);
+    ASSERT(data == uuid);
+    ASSERT(sz == 6);
+
+    sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) "ABCDEFG", 7, &sz);
+    ASSERT(data == uuid);
+    ASSERT(sz == 7);
+
+    sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) "ABCDEFg", 7, &sz);
+    ASSERT(data == uuid);
+    ASSERT(sz == 6);
+
+    sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) "ABCDEFG!", 7, &sz);
+    ASSERT(data == uuid);
+    ASSERT(sz == 7);
+
+    sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) "ABCDEFGHI", 9, &sz);
+    ASSERT(data == uuid);
+    ASSERT(sz == 7);
+
+    sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) "ABCDEFGHIJ", 10, &sz);
+    ASSERT(data == uuid);
+    ASSERT(sz == 10);
+
+    sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) "ABCDEFGHIJ0123456789", 20, &sz);
+    ASSERT(data == uuid);
+    ASSERT(sz == 10);
+
+    sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) "\0ABC", 3, &sz);
+    ASSERT(data == raxNotFound);
+    ASSERT(sz == -1);
+
+    raxFree(rax);
+}
+
 static void test(void)
 {
     rax *rax = raxNew();
@@ -309,6 +421,7 @@ int main(void)
     test2();
     test3();
     test4();
+    test5();
     LOG("Built: %s %s  Pass!", __DATE__, __TIME__);
     return 0;
 }
