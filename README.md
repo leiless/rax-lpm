@@ -63,6 +63,45 @@ The `__nullable` keyword annotates that left hand side type can be `NULL`, i.e. 
 
 Those two APIs used in different scenarios, they're the same per se, choose whichever you like.
 
+# Caveats
+
+When you insert any key into the radix tree in the following form:
+
+```c
+raxInsert(rax, (unsigned char *) _whatever1_, /* n.b. */ 0, (void *) _whatever2_, NULL);
+```
+
+e.g. the `len` parameter equals to zero, there'll always be a zero-length longest prefix match.
+
+Thus, following longest prefix match assertion will always proceed:
+
+```c
+/* Assume `rax' contains only the zero-length key */
+ssize_t sz;
+void *data = raxLongestPrefixMatch(rax, (unsigned char *) "foobar", 6, &sz);
+assert(data == (void *) _whatever2_);
+assert(sz == 0);
+```
+
+### Rationale behind
+
+It simply because when you insert a zero-length key, `rax->head->iskey` always yields 1, hence there is a match.
+
+Similar situations applys to [`raxFind`](https://github.com/antirez/rax#key-lookup), [`raxRemove`](https://github.com/antirez/rax#deleting-keys):
+
+```c
+int ok;
+void *data;
+
+ok = raxInsert(rax, (unsigned char *) _whatever1_, /* n.b. */ 0, (void *) _whatever2_, NULL);
+assert(ok == 1);
+
+data = raxFind(rax, (unsigned char *) _whatever3_, 0);
+assert(data == (void *) _whatever2_);
+ok = raxRemove(rax, (unsigned char *) _whatever4_, 0, NULL);
+assert(ok == 1);
+```
+
 # Run `rax-lpm` tests
 
 This project submoduled [rax](https://github.com/antirez/rax) source, so it can stay up-to-date automatically.
@@ -89,10 +128,10 @@ Please see [Debugging Rax](https://github.com/antirez/rax#debugging-rax).
 
 # License
 
-[sic] [Rax](https://github.com/antirez/rax) is an open source project, released under the BSD two clause license.
+[sic] [Rax](https://github.com/antirez/rax) is an open source project, released under the [BSD two clause license](https://github.com/antirez/rax/blob/master/COPYING).
 
 rax-lpm is also an open source project, released under the [BSD 3-clause license](LICENSE).
 
----
+<br>
 
 *Created 180309+0800*
