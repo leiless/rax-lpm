@@ -233,6 +233,11 @@ static void test4(void)
     ASSERT(sz == 0);
 
     sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) "x", 1, &sz);
+    ASSERT(data == uuid);
+    ASSERT(sz == 0);
+
+    sz = HEX_MAGIC;
     data = raxLongestPrefixMatch(rax, (u8 *) "\0", 2, &sz);
     ASSERT(data == uuid);
     ASSERT(sz == 0);
@@ -407,6 +412,99 @@ static void test5(void)
     raxFree(rax);
 }
 
+static void test6(void)
+{
+    rax *rax = raxNew();
+    ASSERT_NONNULL(rax);
+    static char *uuid = "bbda30fa-a3b0-4fe8-b23c-a0d6c8f56ba9";
+    ssize_t sz;
+    void *data;
+    int ok;
+
+    ok = raxInsert(rax, (u8 *) "!", 0, (void *) uuid, NULL);
+    ASSERT(ok == 1);
+
+    ok = raxInsert(rax, (u8 *) "", 1, (void *) uuid, NULL);
+    ASSERT(ok == 1);
+
+    sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) "", 0, &sz);
+    ASSERT(data == uuid);
+    ASSERT(sz == 0);
+
+    sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) 0x90abcdef, 0, &sz);
+    ASSERT(data == uuid);
+    ASSERT(sz == 0);
+
+    sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) "?", 1, &sz);
+    ASSERT(data == uuid);
+    ASSERT(sz == 0);
+
+    sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) "!", 1, &sz);
+    ASSERT(data == uuid);
+    ASSERT(sz == 0);
+
+    sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) "\0", 1, &sz);
+    ASSERT(data == uuid);
+    ASSERT(sz == 1);
+
+    sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) "", 1, &sz);
+    ASSERT(data == uuid);
+    ASSERT(sz == 1);
+
+    sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) "abcd", 4, &sz);
+    ASSERT(data == uuid);
+    ASSERT(sz == 0);
+
+    ok = raxRemove(rax, (u8 *) "@", 0, NULL);
+    ASSERT(ok = 1);
+
+    sz = HEX_MAGIC;
+    data = raxLongestPrefixMatch(rax, (u8 *) "abcd", 4, &sz);
+    ASSERT(data == raxNotFound);
+    ASSERT(sz == -1);
+
+    raxFree(rax);
+}
+
+static void test7(void)
+{
+    rax *rax = raxNew();
+    ASSERT_NONNULL(rax);
+    static char *uuid = "129fad82-16f2-4ef1-a143-d5027a81d252";
+    void *data;
+    int ok;
+
+    ok = raxInsert(rax, (u8 *) "a", 0, (void *) uuid, NULL);
+    ASSERT(ok == 1);
+    data = raxFind(rax, (u8 *) "", 0);
+    ASSERT(data == uuid);
+    ok = raxRemove(rax, (u8 *) "A", 0, NULL);
+    ASSERT(ok == 1);
+
+    ok = raxInsert(rax, (u8 *) "b", 0, (void *) uuid, NULL);
+    ASSERT(ok == 1);
+    data = raxFind(rax, (u8 *) "B", 0);
+    ASSERT(data == uuid);
+    ok = raxRemove(rax, (u8 *) "", 0, NULL);
+    ASSERT(ok == 1);
+
+    ok = raxInsert(rax, (u8 *) "", 0, (void *) uuid, NULL);
+    ASSERT(ok == 1);
+    data = raxFind(rax, (u8 *) "C", 0);
+    ASSERT(data == uuid);
+    ok = raxRemove(rax, (u8 *) "c", 0, NULL);
+    ASSERT(ok == 1);
+
+    raxFree(rax);
+}
+
 static void test(void)
 {
     rax *rax = raxNew();
@@ -422,7 +520,9 @@ int main(void)
     test3();
     test4();
     test5();
-    LOG("Built: %s %s  Pass!", __DATE__, __TIME__);
+    test6();
+    test7();
+    LOG("Built: %s %s\nPass!", __DATE__, __TIME__);
     return 0;
 }
 
