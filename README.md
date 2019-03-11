@@ -104,7 +104,7 @@ assert(ok == 1);
 
 # Run `rax-lpm` tests
 
-This project submoduled [rax](https://github.com/antirez/rax) source, so it can stay up-to-date automatically.
+This project submoduled [rax](https://github.com/antirez/rax) source, so it can stay up-to-date automatically. Please specify `--recurse-submodules` when cloning this repository.
 
 Before compile the source, you should first do:
 
