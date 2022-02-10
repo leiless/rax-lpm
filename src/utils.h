@@ -17,7 +17,9 @@
 #define __nullable      _Nullable
 #else
 #ifdef __GNUC__
-#define __nonnull       __attribute__ ((nonnull))
+#ifndef __nonnull
+#define __nonnull __attribute__((nonnull))
+#endif
 #else
 #define __nonnull       /* Unavailable */
 #endif  /* __GNUC__ */
